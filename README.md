@@ -1,10 +1,10 @@
 # flask-starter
-Prebuilt flask app with user authentication and profile.
+Prebuilt flask app with user authentication, user profile, and user following.
 
 ## Features
  * Authentication
  * User Profile
- * * User Following
+    * User Following
  * Database Support
 
 
