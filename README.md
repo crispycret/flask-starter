@@ -51,6 +51,61 @@ This project comes with a set of decorators to add and simplfy common functional
 These decorators return keyword arguments such as `token, current_user, target_user` or returns back to the api caller a message stating the error.
 
 #### @token_required -> return token, current_user
-
 #### @target_lookup -> returns target_user
 
+## API Calls
+The following is an example of working API calls for this project.
+
+### Non Authentication Calls
+
+##### /register
+###### Request
+```
+{
+    "email":"example2@email.com",
+    "username": "test002",
+    "password": "testpassword"  
+}
+
+##### Response
+A valid response can be one of the following.
+```
+{
+    "message": "registered successfully"
+}
+```
+
+```
+{
+    "message": "username already used"
+}
+```
+
+```
+{
+    "message": "email already used"
+}
+```
+
+
+### /login
+#### Request
+The login call expects the login information to be passed through the `Authorization` header.\
+The value to the `Authroization` header should be the username and password encoded with `base64` with the format `username:password` after the word `Basic`
+```
+{
+   'Authorization': 'Basic dGVzdDAwMTp0ZXN0cGFzc3dvcmQ='
+}
+```
+
+#### Response
+A successful login response will provide an authorization token for the user that lasts 1 hour.\
+This token should be placed in the header `x-access-token`
+```
+{
+    "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwdWJsaWNfaWQiOiJkZTk2NDNjNS02ZTQ1LTQyZWEtYTJlOS03YTA1Yjg3NmUwNTMiLCJjcmVhdGVkIjoiMjAyMi0wNS0xNVQxMjoyMzoxMi4yNzU1NTMiLCJleHBpcmVzIjoiMjAyMi0wNS0xNVQxMzoyMzoxMi4yNzU1NjYifQ.E0x5WInJirl3txAuLY8fEXNJYO_Mu0LhcR9Tp9Zt42o"
+}
+```
+
+```
+```
