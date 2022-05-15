@@ -34,3 +34,16 @@ flask db upgrade
 ```
 flask run
 ```
+
+
+
+
+## Decorators
+
+This project comes with a set of decorators to add and simplfy common functionality suc as user authentication and user lookups.\
+These decorators return keyword arguments such as `token, current_user, target_user` or returns back to the api caller a message stating the error.
+
+#### @token_required -> return token, current_user
+
+#### @target_lookup -> returns target_user
+
