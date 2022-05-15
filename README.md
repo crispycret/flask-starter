@@ -66,6 +66,7 @@ The following is an example of working API calls for this project.
     "username": "test002",
     "password": "testpassword"  
 }
+```
 
 ##### Response
 A valid response can be one of the following.
