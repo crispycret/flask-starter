@@ -36,7 +36,14 @@ flask run
 ```
 
 
+## Responses
 
+Requests that want to make a change but could not because the state requested is the current state recieve a response code of 202 instead of 200.
+Example:
+```
+Status: 200 -> A user requesting to follow another user that they are not following.
+Status: 202 -> A user requesting to follow another user, but is already following that user.
+```
 
 ## Decorators
 
