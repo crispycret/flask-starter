@@ -39,12 +39,24 @@ flask run
 
 ## Responses
 
-Requests that want to make a change but could not because the state requested is the current state recieve a response code of 202 instead of 200.
-Example:
+Requests that want to make a change but could not because the state requested is the current state returns a response status code of 409 instead of 201.
+##### Example:
 ```
-Status: 200 -> A user requesting to follow another user that they are not following.
-Status: 202 -> A user requesting to follow another user, but is already following that user.
+Status: 201 -> Created: A user requesting to follow another user that they are not following.
+Status: 409 -> Conflict: A user requesting to follow another user, but is already following that user.
 ```
+
+##### Used Status Codes:
+```
+400 Invalid request
+401 Unauthorized
+409 Conflict
+200 Ok
+201 Created
+# 202 Accepted -> request that is returned before operation can be completed.
+# 204 No content
+```
+
 
 ## Decorators
 
