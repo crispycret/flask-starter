@@ -1,5 +1,6 @@
 # flask-starter
-Prebuilt flask app with user authentication, user profile, and user following.
+Prebuilt flask app with user authentication, user profile, user following and blocking support.
+
 
 ## Features
  * Authentication
@@ -47,8 +48,27 @@ Status: 202 -> A user requesting to follow another user, but is already followin
 
 ## Decorators
 
-This project comes with a set of decorators to add and simplfy common functionality suc as user authentication and user lookups.\
-These decorators return keyword arguments such as `token, current_user, target_user` or returns back to the api caller a message stating the error.
+This project comes with a set of decorators to add and simplfy common functionality sucj as user authentication and user lookups.\
+These decorators return keyword arguments such as `token, current_user, target_user` or returns back to the api caller a message stating the error with a proper response code.\
+
+
+Authentication is handled using decorators while providing easy access to the data required to handle authentication.\
+
+This extends to decorators used to verify that data exists such as `@auth.views.target_user_required` which does a database lookup of a username and returns the target user in the `target_user` field. \
+
+The same works for the decorator `@user_not_blocked_required` which requires that the `current_user` and `target_user` do not share a `UserBlock` relationship. This is helpful for when one user wants to message another user to quickly check if the message can even happen.\
+
+For some decorators to work such as `@user_not_blocked_required` there needs to be a proper stacking of decorators that will return the required parameters.\
+
+##### Example
+```
+@auth.route('/users/<username>/message', methods=['POST', 'DELETE'])
+@auth.views.token_required
+@auth.views.target_user_required
+@user_profiles.decorators.user_not_blocked_required
+def message_user(token, current_user, target_user, **kwargs):
+   ...
+```
 
 #### @token_required -> return token, current_user
 #### @target_lookup -> returns target_user
