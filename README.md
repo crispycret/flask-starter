@@ -40,6 +40,7 @@ flask run
 ## Responses
 
 Requests that want to make a change but could not because the state requested is the current state returns a response status code of 409 instead of 201.
+
 ##### Example:
 ```
 Status: 201 -> Created: A user requesting to follow another user that they are not following.
@@ -60,17 +61,17 @@ Status: 409 -> Conflict: A user requesting to follow another user, but is alread
 
 ## Decorators
 
-This project comes with a set of decorators to add and simplfy common functionality sucj as user authentication and user lookups.\
-These decorators return keyword arguments such as `token, current_user, target_user` or returns back to the api caller a message stating the error with a proper response code./
+This project comes with a set of decorators to add and simplfy common functionality sucj as user authentication and user lookups.
+These decorators return keyword arguments such as `token, current_user, target_user` or returns back to the api caller a message stating the error with a proper response code.
 
 
-Authentication is handled using decorators while providing easy access to the data required to handle authentication./
+Authentication is handled using decorators while providing easy access to the data required to handle authentication.
 
-This extends to decorators used to verify that data exists such as `@auth.views.target_user_required` which does a database lookup of a username and returns the target user in the `target_user` field. /
+This extends to decorators used to verify that data exists such as `@auth.views.target_user_required` which does a database lookup of a username and returns the target user in the `target_user` field. 
 
-The same works for the decorator `@user_not_blocked_required` which requires that the `current_user` and `target_user` do not share a `UserBlock` relationship. This is helpful for when one user wants to message another user to quickly check if the message can even happen. /
+The same works for the decorator `@user_not_blocked_required` which requires that the `current_user` and `target_user` do not share a `UserBlock` relationship. This is helpful for when one user wants to message another user to quickly check if the message can even happen. 
 
-For some decorators to work such as `@user_not_blocked_required` there needs to be a proper stacking of decorators that will return the required parameters. /
+For some decorators to work such as `@user_not_blocked_required` there needs to be a proper stacking of decorators that will return the required parameters. 
 
 ##### Example
 ```
@@ -123,7 +124,7 @@ A valid response can be one of the following.
 
 ### /login
 #### Request
-The login call expects the login information to be passed through the `Authorization` header.\
+The login call expects the login information to be passed through the `Authorization` header.
 The value to the `Authroization` header should be the username and password encoded with `base64` with the format `username:password` after the word `Basic`
 ```
 {
@@ -132,7 +133,7 @@ The value to the `Authroization` header should be the username and password enco
 ```
 
 #### Response
-A successful login response will provide an authorization token for the user that lasts 1 hour.\
+A successful login response will provide an authorization token for the user that lasts 1 hour.
 This token should be placed in the header `x-access-token`
 ```
 {
@@ -141,4 +142,5 @@ This token should be placed in the header `x-access-token`
 ```
 
 ```
+...
 ```
