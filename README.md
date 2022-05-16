@@ -1,5 +1,6 @@
 # flask-starter
-Prebuilt flask app with user authentication, user profile, and user following.
+Prebuilt flask app with user authentication, user profile, user following and blocking support.
+
 
 ## Features
  * Authentication
@@ -10,7 +11,7 @@ Prebuilt flask app with user authentication, user profile, and user following.
 
 
 ## Generate Application Secret Key
-In a python shell generate a secret token for the application. \
+In a python shell generate a secret token for the application. /
 
 ```
 import secrets
@@ -36,30 +37,73 @@ flask run
 ```
 
 
-## Responses
+# Responses
 
-Requests that want to make a change but could not because the state requested is the current state recieve a response code of 202 instead of 200.
-Example:
+Requests that want to make a change but could not because the state requested is the current state returns a response status code of 409 instead of 201.
+
+##### Example:
 ```
-Status: 200 -> A user requesting to follow another user that they are not following.
-Status: 202 -> A user requesting to follow another user, but is already following that user.
+Status: 201 -> Created: A user requesting to follow another user that they are not following.
+Status: 409 -> Conflict: A user requesting to follow another user, but is already following that user.
 ```
 
-## Decorators
+##### Used Status Codes:
+```
+400 Invalid request
+401 Unauthorized
+409 Conflict
+200 Ok
+201 Created
+# 202 Accepted -> request that is returned before operation can be completed.
+# 204 No content
+```
 
-This project comes with a set of decorators to add and simplfy common functionality suc as user authentication and user lookups.\
-These decorators return keyword arguments such as `token, current_user, target_user` or returns back to the api caller a message stating the error.
 
-#### @token_required -> return token, current_user
-#### @target_lookup -> returns target_user
 
-## API Calls
+
+
+# Decorators
+
+This project comes with a set of decorators to add and simplfy common functionality sucj as user authentication and user lookups.
+These decorators return keyword arguments such as `token, current_user, target_user` or returns back to the api caller a message stating the error with a proper response code.
+
+
+Authentication is handled using decorators while providing easy access to the data required to handle authentication.
+
+This extends to decorators used to verify that data exists such as `@auth.views.target_user_required` which does a database lookup of a username and returns the target user in the `target_user` field. 
+
+The same works for the decorator `@user_not_blocked_required` which requires that the `current_user` and `target_user` do not share a `UserBlock` relationship. This is helpful for when one user wants to message another user to quickly check if the message can even happen. 
+
+For some decorators to work such as `@user_not_blocked_required` there needs to be a proper stacking of decorators that will return the required parameters. 
+
+##### Example
+```
+@auth.route('/users/<username>/message', methods=['POST', 'DELETE'])
+@auth.views.token_required
+@auth.views.target_user_required
+@user_profiles.decorators.user_not_blocked_required
+def message_user(token, current_user, target_user, **kwargs):
+   ...
+```
+
+##### @token_required -> return token, current_user
+##### @target_user_required -> returns target_user
+##### @user_not_blocked_required -> conditional, no extra values returned (Not created yet)
+
+
+
+
+
+
+
+
+# API Calls
 The following is an example of working API calls for this project.
 
-### Non Authentication Calls
+## Non Authentication Calls
 
-##### /register
-###### Request
+### /register
+#### Request
 ```
 {
     "email":"example2@email.com",
@@ -68,7 +112,7 @@ The following is an example of working API calls for this project.
 }
 ```
 
-##### Response
+#### Response
 A valid response can be one of the following.
 ```
 {
@@ -91,7 +135,7 @@ A valid response can be one of the following.
 
 ### /login
 #### Request
-The login call expects the login information to be passed through the `Authorization` header.\
+The login call expects the login information to be passed through the `Authorization` header.
 The value to the `Authroization` header should be the username and password encoded with `base64` with the format `username:password` after the word `Basic`
 ```
 {
@@ -100,7 +144,7 @@ The value to the `Authroization` header should be the username and password enco
 ```
 
 #### Response
-A successful login response will provide an authorization token for the user that lasts 1 hour.\
+A successful login response will provide an authorization token for the user that lasts 1 hour.
 This token should be placed in the header `x-access-token`
 ```
 {
@@ -109,4 +153,5 @@ This token should be placed in the header `x-access-token`
 ```
 
 ```
+...
 ```
