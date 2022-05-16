@@ -86,7 +86,7 @@ class UserSocialLinkOther (db.Model):
     
     
     
-class UserFollower(db.Model):
+class UserFollow(db.Model):
     """ Tracks the action of one user following another user. """
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     target_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)

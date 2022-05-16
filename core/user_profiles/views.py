@@ -5,8 +5,15 @@ from .. import db, auth, utils
 from ..auth.models import User
 
 from . import user_profiles
-from .models import UserProfile, UserFollower, UserBlock, \
+from .models import UserProfile, UserFollow, UserBlock, \
                     UserSocialLinks, UserSocialLinkOther
+
+                  
+from .decorators import current_user_blocking_target_user_required, \
+                        current_user_not_blocking_target_user_required, \
+                        current_user_following_target_user_required, \
+                        current_user_not_following_target_user_required
+
 
 
 
@@ -16,8 +23,8 @@ from .models import UserProfile, UserFollower, UserBlock, \
 def get_user_profile(target_user, username):
     """ Return user information from multiple tables. """
     profile = UserProfile.query.filter_by(user_id=target_user.id).first()
-    followers = UserFollower.query.filter_by(target_id=target_user.id)
-    following = UserFollower.query.filter_by(user_id=target_user.id)
+    followers = UserFollow.query.filter_by(target_id=target_user.id)
+    following = UserFollow.query.filter_by(user_id=target_user.id)
     social = UserSocialLinks.query.filter_by(user_id=target_user.id)
     more_social = UserSocialLinkOther.query.filter_by(user_id=target_user.id)
     
@@ -41,11 +48,11 @@ def follow_user(token, current_user, target_user, username):
     """ Follow or unfollow the target user from the current. """
     # Follow the user only if not already following
     if (request.method == 'POST'):
-        if UserFollower.query.filter_by(user_id=current_user.id, target_id=target_user.id).first():
+        if UserFollow.query.filter_by(user_id=current_user.id, target_id=target_user.id).first():
             msg = "user '{}' is already following '{}'".format(current_user.username, target_user.username)
             return utils.auth_response(token, msg, status_code=409)
             
-        follow = UserFollower(user_id=current_user.id, target_id=target_user.id, created=datetime.utcnow(), updated=datetime.utcnow())
+        follow = UserFollow(user_id=current_user.id, target_id=target_user.id, created=datetime.utcnow(), updated=datetime.utcnow())
         db.session.add(follow)
         db.session.commit()
         msg = "user '{}' is now following '{}'".format(current_user.username, target_user.username)
@@ -53,7 +60,7 @@ def follow_user(token, current_user, target_user, username):
         
     # Unfollow the user
     elif request.method == 'DELETE':
-        follow = UserFollower.query.filter_by(user_id=current_user.id, target_id=target_user.id).first()
+        follow = UserFollow.query.filter_by(user_id=current_user.id, target_id=target_user.id).first()
         if not follow:
             msg = "user '{}' was not following '{}'".format(current_user.username, target_user.username)
             return utils.auth_response(token, msg, 409)
@@ -73,7 +80,6 @@ def follow_user(token, current_user, target_user, username):
 @user_profiles.route('/users/<username>/block', methods=['POST', 'DELETE'])
 @auth.views.token_required
 @auth.views.target_user_required
-# def block_user(*args, **kwargs): -> access arguments through kwargs
 def block_user(token, current_user, target_user, username):
     """ Create a Block relationship between the current_user and the target_user. """
 
