@@ -2,7 +2,7 @@ import secrets
 from datetime import datetime
 
 
-from .. import app, db
+from .. import db
 
 
 class User(db.Model):

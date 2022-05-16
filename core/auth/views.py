@@ -1,13 +1,10 @@
 import uuid
 import secrets
-from datetime import datetime, timedelta, timezone
 
-from functools import wraps
-
-from flask import make_response, request, jsonify
+from flask import request
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from .. import db, utils, Configuration
+from .. import db, utils
 
 from . import auth
 from . import utils as auth_utils
@@ -15,19 +12,6 @@ from .models import User, UserPrivilege
 from .decorators import target_user_required, token_required
 
 
-            
-            
-            
-# 400 Invalid request
-# 401 Unauthorized
-# 409 Conflict
-# 200 Ok
-# 201 Created
-# 202 Accepted -> request that is returned before operation can be completed.
-# 204 No content
-
-
-            
             
             
 
@@ -78,7 +62,9 @@ def sign_up():
         db.session.commit()
         return utils.response('registerd successfully', 201)
     except Exception as e:
-        return utils.response('unknown database error', status_code=500)
+        return utils.response('unknown database error', 500)
+
+
 
 
 
