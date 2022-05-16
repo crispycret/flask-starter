@@ -45,6 +45,10 @@ from .auth import auth as auth_blueprint
 app.register_blueprint(auth_blueprint)
 
 
+from .user_profiles import user_profiles as user_profiles_blueprint
+app.register_blueprint(user_profiles_blueprint)
+
+
 from core import views
 
 
