@@ -83,8 +83,9 @@ def message_user(token, current_user, target_user, **kwargs):
    ...
 ```
 
-#### @token_required -> return token, current_user
-#### @target_lookup -> returns target_user
+##### @token_required -> return token, current_user
+##### @target_user_required -> returns target_user
+##### @user_not_blocked_required -> conditional, no extra values returned (Not created yet)
 
 ## API Calls
 The following is an example of working API calls for this project.
