@@ -37,7 +37,7 @@ flask run
 ```
 
 
-## Responses
+# Responses
 
 Requests that want to make a change but could not because the state requested is the current state returns a response status code of 409 instead of 201.
 
@@ -59,7 +59,10 @@ Status: 409 -> Conflict: A user requesting to follow another user, but is alread
 ```
 
 
-## Decorators
+
+
+
+# Decorators
 
 This project comes with a set of decorators to add and simplfy common functionality sucj as user authentication and user lookups.
 These decorators return keyword arguments such as `token, current_user, target_user` or returns back to the api caller a message stating the error with a proper response code.
@@ -87,13 +90,20 @@ def message_user(token, current_user, target_user, **kwargs):
 ##### @target_user_required -> returns target_user
 ##### @user_not_blocked_required -> conditional, no extra values returned (Not created yet)
 
-## API Calls
+
+
+
+
+
+
+
+# API Calls
 The following is an example of working API calls for this project.
 
-### Non Authentication Calls
+## Non Authentication Calls
 
-##### /register
-###### Request
+### /register
+#### Request
 ```
 {
     "email":"example2@email.com",
@@ -102,7 +112,7 @@ The following is an example of working API calls for this project.
 }
 ```
 
-##### Response
+#### Response
 A valid response can be one of the following.
 ```
 {
