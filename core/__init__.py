@@ -5,6 +5,7 @@ import uuid
 from functools import wraps
 
 from flask import Flask, jsonify, request, make_response
+from flask_cors import CORS
 from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
@@ -18,6 +19,8 @@ from config import Configuration
 app = Flask(__name__)
 
 app.config.from_object(Configuration)
+
+CORS(app)
 
 db = SQLAlchemy(app)
 
