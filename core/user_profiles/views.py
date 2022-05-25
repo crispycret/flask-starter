@@ -34,7 +34,7 @@ def get_user_profile(target_user, username):
         'followers': [follower.serialized for follower in followers] if followers else [],
         'following': [follow.serialized for follow in following] if following else [],
     }
-    return utils.response(data=results)
+    return utils.response(**results)
 
 
 
@@ -50,28 +50,28 @@ def follow_user(token, current_user, target_user, username):
     if (request.method == 'POST'):
         if UserFollow.query.filter_by(user_id=current_user.id, target_id=target_user.id).first():
             msg = "user '{}' is already following '{}'".format(current_user.username, target_user.username)
-            return utils.auth_response(token, msg, status_code=409)
+            return auth.utils.response(token, msg, status_code=409)
             
         follow = UserFollow(user_id=current_user.id, target_id=target_user.id, created=datetime.utcnow(), updated=datetime.utcnow())
         db.session.add(follow)
         db.session.commit()
         msg = "user '{}' is now following '{}'".format(current_user.username, target_user.username)
-        return utils.auth_response(token, msg, 201)
+        return auth.utils.response(token, msg, 201)
         
     # Unfollow the user
     elif request.method == 'DELETE':
         follow = UserFollow.query.filter_by(user_id=current_user.id, target_id=target_user.id).first()
         if not follow:
             msg = "user '{}' was not following '{}'".format(current_user.username, target_user.username)
-            return utils.auth_response(token, msg, 409)
+            return auth.utils.response(token, msg, 409)
 
         db.session.delete(follow)
         db.session.commit()
 
         msg = "user '{}' is no longer following '{}'".format(current_user.username, target_user.username)
-        return utils.auth_response(token, msg, 201)
+        return auth.utils.response(token, msg, 201)
     msg = 'Unexpected Error - unwanted reach of function folower_user().'
-    return utils.auth_response (token, msg, 500)
+    return auth.utils.response (token, msg, 500)
     
     
     
@@ -89,26 +89,26 @@ def block_user(token, current_user, target_user, username):
     if request.method == 'POST':
         if block:
             msg = 'user {} has already blocked user {}'.format(current_user.username, target_user.username)
-            return utils.auth_response(token, msg, 409)
+            return auth.utils.response(token, msg, 409)
         
         block = UserBlock(user_id=current_user.id, target_id=target_user.id, created=datetime.utcnow(), updated=datetime.utcnow())
         db.session.add(block)
         db.session.commit()
 
         msg = "user {} has successfully blocked user {}".format(current_user.username, target_user.username)
-        return utils.auth_response(token, msg, 201)
+        return auth.utils.response(token, msg, 201)
     
     # Destroy the block relationship between current_user and target_user
     elif request.method == 'DELETE':
         if not block:
             msg = 'user {} was not blocking user {}'.format(current_user.username, target_user.username)
-            return utils.auth_response(token, msg, 409)
+            return auth.utils.response(token, msg, 409)
 
         db.session.delete(block)
         db.session.commit()
         
         msg = 'user {} is no longer blocking user {}'.format(current_user.username, target_user.username)
-        return utils.auth_response(token, msg, 201)
+        return auth.utils.response(token, msg, 201)
     
     
     

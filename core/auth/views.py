@@ -13,8 +13,13 @@ from .decorators import target_user_required, token_required
 
 
             
-            
-
+@auth.route('/logout', methods=['POST'])
+@token_required
+def logout(token, current_user):
+# def logout():
+    return utils.response()
+    
+    
 
 @auth.route('/register', methods=['POST'])
 def sign_up():
@@ -83,7 +88,7 @@ def login_user():
     data = request.authorization
     
     if not data or not data.username or not data.password: 
-        return utils.response('could not verify', status_code=401, data={'Authorization': 'login required'})
+        return utils.response('could not verify', status_code=401, Authorization='login required')
 
 
     user = User.query.filter_by(username=data.username).first()
@@ -99,12 +104,15 @@ def login_user():
     token = auth_utils.encode_token_data(token_data)
     
     # Return the token
-    return utils.auth_response(token, 'login success')
+    return auth_utils.response(token, 'login success', user=user.serialized)
 
 
 
 
-
+@auth.route('/token/validate', methods=['POST'])
+@token_required
+def validate_token(token, current_user):
+    return auth_utils.response(token, msg='success', status_code=200, isValid=True)
 
 
 
@@ -116,16 +124,14 @@ def get_all_users():
     """ Return a list of all users. VERY INSECURE! """
     users = User.query.all()
     results = [ user.serialized for user in users ]
-    data = {'users': results}
-    return utils.response(data=data)
+    return utils.response(users=results)
             
 
 @auth.route('/users/<username>', methods=['GET'])
 @target_user_required
 def get_user(username, target_user):
     """ Return the found user object. """
-    data = {'user': target_user.serialized}
-    return utils.response(data=data)
+    return utils.response(user=target_user.serialized)
     
     
     

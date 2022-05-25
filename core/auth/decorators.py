@@ -47,12 +47,13 @@ def token_required(f):
             token = request.headers['x-access-token']
             
         if not token: 
-            return utils.response('missing a valid token', status_code=401)
+            return utils.response('token is missing', status_code=401)
         
+
         try:
             # Decode the given token and find the current user.
             token_data = auth_utils.decode_token(token)
-            expires_timestamp = utils.time.encode_timestamp(token_data['expires'])
+            expires_timestamp = utils.time.decode_timestamp(token_data['expires'])
             target_timestamp = utils.time.future(minutes=30)
             
             # Token has expired.
@@ -63,10 +64,10 @@ def token_required(f):
             if expires_timestamp > target_timestamp:
                 token_data = auth_utils.create_token_data(token_data['public_id'])
                 token = auth_utils.encode_token_data(token_data)
-            
+
             # Find the user with the public id
             current_user = User.query.filter_by(public_id=token_data['public_id']).first()
-                
+
         except Exception as e:
             return utils.response('token is invalid', status_code=401)
     

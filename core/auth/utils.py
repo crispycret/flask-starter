@@ -5,6 +5,12 @@ import jwt
 from .. import utils, Configuration
 
 
+
+
+def response(token, msg='success', status_code=200, **kwargs):
+    return utils.response(msg, status_code, token, **kwargs)
+
+
 def create_token_data(public_id):
     return {
         'public_id': public_id,
