@@ -8,7 +8,7 @@ from .. import utils, Configuration
 
 
 def response(token, msg='success', status_code=200, **kwargs):
-    return utils.response(msg, status_code, token, **kwargs)
+    return utils.response(msg, status_code, token=token, **kwargs)
 
 
 def create_token_data(public_id):

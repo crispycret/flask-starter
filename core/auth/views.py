@@ -67,7 +67,7 @@ def sign_up():
         db.session.commit()
         return utils.response('registerd successfully', 201)
     except Exception as e:
-        return utils.response('unknown database error', 500)
+        return utils.response('unknown database error', 500, error=str(e))
 
 
 
