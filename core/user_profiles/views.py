@@ -17,23 +17,46 @@ from .decorators import current_user_blocking_target_user_required, \
 
 
 
+@user_profiles.route('/users/<username>/profile/create', methods=['POST'])
+@auth.decorators.target_user_required
+def create_user_profile(target_user, username):
+    profile = UserProfile.query.filter_by(user_id=target_user.id).first()
+    if (profile):
+        return utils.response(msg='profile already exists for user', status_code=409)
+    
+    now = datetime.utcnow()
+    profile = UserProfile(user_id=target_user.id, bio="", created=now, updated=now)
+
+    try:
+        db.session.add(profile)
+        db.session.commit()
+        return utils.response(msg='user profile created', status_code=201, profile=profile.serialized)
+    except Exception as e:
+        return utils.response(msg='unknown error', status_code=500, error=str(e))
+    
+
+
+
 
 @user_profiles.route('/users/<username>/profile', methods=['GET'])
-@auth.views.target_user_required
+@auth.decorators.target_user_required
 def get_user_profile(target_user, username):
     """ Return user information from multiple tables. """
     profile = UserProfile.query.filter_by(user_id=target_user.id).first()
     followers = UserFollow.query.filter_by(target_id=target_user.id)
     following = UserFollow.query.filter_by(user_id=target_user.id)
-    social = UserSocialLinks.query.filter_by(user_id=target_user.id)
+    social = UserSocialLinks.query.filter_by(user_id=target_user.id).first()
     more_social = UserSocialLinkOther.query.filter_by(user_id=target_user.id)
     
+    
     results = {
-        'user': target_user.serialized if target_user else {},  
-        'profile': profile.serialized if profile else {},
-        'followers': [follower.serialized for follower in followers] if followers else [],
-        'following': [follow.serialized for follow in following] if following else [],
+        'profile': profile.serialized if profile else None,
+        'followers': [follower.serialized for follower in followers] if followers else None,
+        'following': [follow.serialized for follow in following] if following else None,
     }
+    for key, value in profile.serialized.items():
+        results[key] = value
+        
     return utils.response(**results)
 
 
@@ -41,8 +64,8 @@ def get_user_profile(target_user, username):
 
 
 @user_profiles.route('/users/<username>/follow', methods=['POST', 'DELETE'])
-@auth.views.token_required
-@auth.views.target_user_required
+@auth.decorators.token_required
+@auth.decorators.target_user_required
 def follow_user(token, current_user, target_user, username):
 
     """ Follow or unfollow the target user from the current. """
@@ -78,8 +101,8 @@ def follow_user(token, current_user, target_user, username):
 
 # @target_lookup
 @user_profiles.route('/users/<username>/block', methods=['POST', 'DELETE'])
-@auth.views.token_required
-@auth.views.target_user_required
+@auth.decorators.token_required
+@auth.decorators.target_user_required
 def block_user(token, current_user, target_user, username):
     """ Create a Block relationship between the current_user and the target_user. """
 

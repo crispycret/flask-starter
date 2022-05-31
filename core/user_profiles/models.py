@@ -5,7 +5,7 @@ from .. import db
 class UserProfile (db.Model):
     """ Data extension of a User. """
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
-    bio = db.Column(db.String(255))
+    bio = db.Column(db.String(255), default="No bio")
     
     created = db.Column(db.DateTime)
     updated = db.Column(db.DateTime)

@@ -127,6 +127,7 @@ def get_all_users():
     return utils.response(users=results)
             
 
+
 @auth.route('/users/<username>', methods=['GET'])
 @target_user_required
 def get_user(username, target_user):

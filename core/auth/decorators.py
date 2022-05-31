@@ -15,7 +15,7 @@ def target_user_required(f):
     """ return a user in the field target_user by filtering a username or forward a response error to the api caller. """
     @wraps(f)
     def decorator(username, *args, **kwargs):
-        target_user = auth.views.User.query.filter_by(username=username).first()
+        target_user = User.query.filter_by(username=username).first()
         if not target_user: 
             msg='username {} does not exists'.format(username)
             return utils.response(msg, status_code=404)
